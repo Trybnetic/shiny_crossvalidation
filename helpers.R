@@ -30,7 +30,7 @@ fitModels <- function(Data, max.poly){
 
 
   x.new <- seq(min(Data$x), max(Data$x), by = 0.05)
-  
+
   for(i in 1:max.poly)
   {
     sub.dat <- new.dat[new.dat$degree==i,]
@@ -51,4 +51,13 @@ plotModels <- function(Data, max.poly){
                 new.dat)
   p <- p + scale_colour_discrete(name = "Degree")
   p
+}
+
+validate <- function(data, n_bins) {
+  n <- nrow(data)
+  bins <- 1:n_bins
+
+  k = ceiling(n / n_bins)
+
+  data$bin <- sample(rep(bins, k)[1:n])
 }
