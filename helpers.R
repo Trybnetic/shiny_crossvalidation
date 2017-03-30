@@ -2,11 +2,13 @@
 # all packages it depends on
 library(ggplot2)
 
-simulateData <- function(Sample, Noise=1, Model=NA){
-  # generate the x predictor
+simulateData <- function(Sample, Noise=NA, Model=NA, Polynom){
   x <- runif(Sample,-2,2)
-  # generate the y response
-  y <- 2*x^3 + x^2 - 2*x +5 + rnorm(Sample, sd = Noise)
+  X <- cbind(intercept=1, poly(x, Polynom, simple=TRUE))
+  y <- X %*% Model
+  
+  Noise <- 1/(1-Noise)
+  y <- y + rnorm(Sample, sd=sd(y)*Noise)
   data.frame(x=x, y=y)
 }
 
@@ -50,5 +52,21 @@ plotModels <- function(Data, max.poly){
                     colour=as.factor(degree)),
                 new.dat)
   p <- p + scale_colour_discrete(name = "Degree")
+  p
+}
+
+plotGenerativeModel <- function(polynom, model, noise, min=-2, max=2){
+  x <- cbind(intercept=1, poly(seq(min, max, 0.01), polynom, simple = TRUE))
+
+  y <- x %*% model
+  var.y <- var(y)
+  noise <- noise/(1-noise)
+  upper <- as.vector(y) + sqrt(noise)
+  lower <- as.vector(y) - sqrt(noise)
+  d <- data.frame(x=x[,2], y=y, upper=upper, lower=lower)
+  p <- ggplot()
+  p <- p + geom_line(aes(x, y), d)
+  p <- p + geom_ribbon(aes(x=x, ymax=upper, ymin=lower), d, alpha="0.5")
+  
   p
 }
