@@ -2,17 +2,17 @@
 # all packages it depends on
 library(ggplot2)
 
-simulateData <- function(Sample, Noise=NA, Model=NA, Polynom){
+simulateData <- function(sample_size, polynomial, noise=NA){
   # generate the x predictor
-  x <- round(runif(Sample, -2, 2),2)
+  x <- round(runif(sample_size, -2, 2),2)
   # add minimal and maximal values for x
-  x <- c(-2, x[2:(Sample -1)], 2)
+  x <- c(-2, x[2:(sample_size -1)], 2)
   # generate the y response
-  X <- cbind(intercept=1, poly(x, Polynom, simple=TRUE))
-  y <- X %*% Model
-  
-  Noise <- 1/(1-Noise)
-  y <- y + rnorm(Sample, sd=sd(y)*Noise)
+  X <- cbind(intercept=1, poly(x, length(polynomial), simple=TRUE))
+  y <- X %*% polynomial
+
+  noise <- 1/(1-noise)
+  y <- y + rnorm(sample_size, sd=sd(y)*noise)
   data.frame(x=x, y=y)
 }
 
@@ -77,7 +77,7 @@ plotGenerativeModel <- function(polynom, model, noise, min=-2, max=2){
   p <- ggplot()
   p <- p + geom_line(aes(x, y), d)
   p <- p + geom_ribbon(aes(x=x, ymax=upper, ymin=lower), d, alpha="0.5")
-  
+
   p
 }
 
@@ -150,4 +150,3 @@ validation_se <- function(data, n_bins, max.poly = 2, seed = 1337) {
 
   return(res)
 }
-
