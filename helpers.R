@@ -2,13 +2,19 @@
 # all packages it depends on
 library(ggplot2)
 
-simulateData <- function(sample_size, polynomial, noise=NA){
+# simulates data for a polynomial model and adds noise
+#
+# @param sample_size: number of simulated observations
+# @param polynomial: a vector containing the coefficients of a polynomial
+# @param noise: the amount of noise which will be added to the expected
+#               values of the polynomial
+simulateData <- function(sample_size, polynomial, noise){
   # generate the x predictor
   x <- round(runif(sample_size, -2, 2),2)
   # add minimal and maximal values for x
   x <- c(-2, x[2:(sample_size -1)], 2)
   # generate the y response
-  X <- cbind(intercept=1, poly(x, length(polynomial), simple=TRUE))
+  X <- cbind(intercept=1, poly(x, length(polynomial) - 1, simple=TRUE))
   y <- X %*% polynomial
 
   noise <- 1/(1-noise)
