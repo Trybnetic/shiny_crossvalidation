@@ -18,6 +18,10 @@ plot_aic_bic <- function(data) {
   p <- ggplot(data=data, aes(x=degree, y=value, group=measure, colour=measure))
   p <- p + geom_line()
   # p <- p + scale_color_manual(values=c(col1, col2))
-  p <- p + xlab("Degree") + ylab("Value") + labs(colour="Criterion")
+  p <- p + labs(colour="Criterion")
+  p <- p + theme(axis.title.x = element_text(),
+                 axis.title.y = element_blank()
+                 )
   return(p)
 }
+plot_aic_bic(df)
