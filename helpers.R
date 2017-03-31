@@ -48,22 +48,21 @@ plotModels <- function(Data, max.poly){
                            fun = f,
                            aes(colour = polynomial))
   }
-
   p
 }
 
 plotGenerativeModel <- function(poly_vec, noise=NA, min=-20, max=20){
   f <- as.function(polynomial(poly_vec))
+  pol <- as.character(polynomial(poly_vec))
   x <- data.frame(x=seq(min, max, 0.01))
   y <- f(x)
-  
   upper <- as.vector(y) + noise
   lower <- as.vector(y) - noise
   d <- data.frame(x=x, y=y, upper=upper, lower=lower)
   p <- ggplot(data=x, aes(x=x))
   p <- p + stat_function(fun=f) #geom_line(aes(x, y), d)
   p <- p + geom_ribbon(aes(x=x, ymax=upper, ymin=lower), d, alpha="0.5")
-  
+  p <- p + annotate('text', x = 0, y = max(upper), label=pol, parse=TRUE)#ggtitle(tits)
   p
 }
 

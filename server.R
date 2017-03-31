@@ -3,6 +3,7 @@ library(shiny)
 library(shinyBS)
 library(shinyjs)
 library(plotly)
+library(polynom)
 source("helpers.R")
 
 shinyServer(function(input, output) {
@@ -26,10 +27,11 @@ shinyServer(function(input, output) {
   })
   
   output$ModelPlot <- renderPlotly({
+    pdf(NULL)
     plotModels(Data(), input$max.poly)
   })
   output$FitPlot <- renderPlot({
-    plot_aic_bic(Data())
+    plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data()))
   })
 
   # plot the generative model
