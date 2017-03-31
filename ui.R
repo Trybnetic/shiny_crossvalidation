@@ -2,10 +2,10 @@ library(ggplot2)
 library(shiny)
 library(shinyBS)
 library(shinyjs)
+library(plotly)
 source("helpers.R")
 
 shinyUI(fluidPage(
-  
   # Navbar
   navbarPage("app_name",
              # Tab1 title
@@ -83,5 +83,6 @@ shinyUI(fluidPage(
                         )
                       )
              )
+
   )
 ))

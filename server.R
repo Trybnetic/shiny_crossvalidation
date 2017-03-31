@@ -2,9 +2,8 @@ library(ggplot2)
 library(shiny)
 library(shinyBS)
 library(shinyjs)
+library(plotly)
 source("helpers.R")
-
-# Mod <- matrix(0)
 
 shinyServer(function(input, output) {
   Data <- reactive({
@@ -16,12 +15,12 @@ shinyServer(function(input, output) {
     )
   })
 
-  output$ModelPlot <- renderPlot({
+  output$ModelPlot <- renderPlotly({
     plotModels(Data(), input$max.poly)
   })
-  # output$FitPlot <- renderPlot({
-  #
-  # })
+  output$FitPlot <- renderPlot({
+    plot_aic_bic(Data())
+  })
 
   # plot the generative model
   output$GenerativeModel <- renderPlot({
