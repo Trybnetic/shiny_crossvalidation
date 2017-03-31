@@ -1,3 +1,4 @@
+# calculate AIC + BIC
 calc_aic_bic <- function(max.poly, data) {
   # df to store AIC + BIC values
   df <- data.frame(measure=c(rep("AIC",max.poly),rep("BIC",max.poly)),
@@ -12,10 +13,16 @@ calc_aic_bic <- function(max.poly, data) {
   return(df)
 }
 
+# plot AIC + BIC
 plot_aic_bic <- function(data) {
   p <- ggplot(data=data, aes(x=degree, y=value, group=measure, colour=measure))
   p <- p + geom_line()
-  # p <- p + scale_color_manual(values=c(col1, col2))
-  p <- p + xlab("Degree") + ylab("Value") + labs(colour="Criterion")
+  p <- p + geom_point()
+  p <- p + xlab("Number of polynomials in the model") + labs(colour="Criterion")
+  p <- p + theme(axis.title.x = element_text(),
+                 axis.title.y = element_blank()
+  )
+  p <- p + scale_x_continuous(breaks=seq(1,10,1))
   return(p)
 }
+plot_aic_bic(df)

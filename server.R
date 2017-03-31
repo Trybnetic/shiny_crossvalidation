@@ -8,6 +8,7 @@ library(gridExtra)
 source("helpers.R")
 source("varianceOfFunction.R")
 source("plot_crossValidation.R")
+source("aicbic.R")
 
 shinyServer(function(input, output) {
   Data <- reactive({
