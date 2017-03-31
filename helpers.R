@@ -13,7 +13,7 @@ simulateData <- function(sample_size, poly_vec, noise){
   f <- as.function(polynomial(poly_vec))
 
   # generate the x predictor
-  x <- runif(sample_size, -20, 20)
+  x <- runif(sample_size, -5, 5)
 
   # calculate y values
   y <- f(x)
@@ -42,15 +42,15 @@ plotModels <- function(Data, max.poly){
   degree <- 0
   for (f in estimated_functions) {
     degree <- degree + 1
-    p <- p + stat_function(data = data.frame(x = -20:20,
-                                             degree = rep(as.character(degree), 41)),
+    p <- p + stat_function(data = data.frame(x = -5:5,
+                                             degree = rep(as.character(degree), 11)),
                            fun = f,
                            aes(colour = degree))
   }
   p
 }
 
-plotGenerativeModel <- function(poly_vec, noise=NA, min=-20, max=20){
+plotGenerativeModel <- function(poly_vec, noise=NA, min=-5, max=5){
   f <- as.function(polynomial(poly_vec))
   pol <- as.character(polynomial(poly_vec))
   x <- data.frame(x=seq(min, max, 0.01))

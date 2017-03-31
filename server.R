@@ -9,6 +9,7 @@ source("helpers.R")
 source("varianceOfFunction.R")
 source("plot_crossValidation.R")
 source("aicbic.R")
+source("rsquared")
 
 shinyServer(function(input, output) {
   Data <- reactive({
@@ -23,7 +24,7 @@ shinyServer(function(input, output) {
   # Calculates the sd of the noise based on the variance of the selected function
   # and the proportion of noise in the total variance 
   Noise <- reactive({
-    varFunction <- varf(polynomial(Model()), -20, 20)
+    varFunction <- varf(polynomial(Model()), -5, 5)
     varNoise <- varFunction * input$Noise / (1-input$Noise)
     sdNoise <- sqrt(varNoise)
     
