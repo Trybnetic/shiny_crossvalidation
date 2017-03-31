@@ -2,9 +2,13 @@ library(ggplot2)
 library(shiny)
 library(shinyBS)
 library(shinyjs)
+library(plotly)
+library(polynom)
+library(gridExtra)
 source("helpers.R")
-
-# Mod <- matrix(0)
+source("varianceOfFunction.R")
+source("plot_crossValidation.R")
+source("aicbic.R")
 
 shinyServer(function(input, output) {
   Data <- reactive({
@@ -12,24 +16,46 @@ shinyServer(function(input, output) {
       NULL
     }
     isolate(
-      simulateData(input$Sample, Noise=input$Noise, Model = Model(), Polynom = input$Polynom)
+      simulateData(input$Sample,  Model(), Noise())
     )
   })
-
-  output$ModelPlot <- renderPlot({
+  
+  # Calculates the sd of the noise based on the variance of the selected function
+  # and the proportion of noise in the total variance 
+  Noise <- reactive({
+    varFunction <- varf(polynomial(Model()), -20, 20)
+    varNoise <- varFunction * input$Noise / (1-input$Noise)
+    sdNoise <- sqrt(varNoise)
+    
+    ifelse(sdNoise == 0, input$Noise, sdNoise)
+  })
+  
+  output$ModelPlot <- renderPlotly({
+    pdf(NULL)
     plotModels(Data(), input$max.poly)
   })
-  # output$FitPlot <- renderPlot({
-  #   
-  # })
   
+  # update the plots upon pressing button Crossvalidate
+  FPlot <- eventReactive(input$Crossvalidate, {
+      grid.arrange(
+        plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data())),
+        plotCrossValidation(validation_se(Data(),
+                                          input$n.bins,
+                                          input$max.poly)),
+        ncol=2
+      )
+  })
+  # Render the BIC / crossvalidation plot
+  output$FitPlot <- renderPlot({FPlot()})
+
+
   # plot the generative model
   output$GenerativeModel <- renderPlot({
-    plotGenerativeModel(polynom = input$Polynom,
-                        model = Model(),
-                        noise=input$Noise)
+    plotGenerativeModel(poly_vec = Model(),
+                        noise=Noise())
 
-  })  
+  })
+
   
   ModelTable <- reactive({
     m <- matrix(0, nrow=input$Polynom+1, ncol=1)
@@ -41,12 +67,12 @@ shinyServer(function(input, output) {
   observeEvent(input$Polynom,{
     Mod$table <- ModelTable()
   })
-  
+
   Model <- reactive({
     Mod$table[input$SelectCoef,] <- input$Coefficient
     Mod$table
   })
-  
+
   output$CoefSelect <- renderUI({
     selectInput("SelectCoef", "Select the coefficient", input$Polynom,
                 choices = as.list(c("Intercept", paste("X", 1:input$Polynom, sep="^"))))
