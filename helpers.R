@@ -42,11 +42,10 @@ plotModels <- function(Data, max.poly){
   degree <- 0
   for (f in estimated_functions) {
     degree <- degree + 1
-    text <- paste("x^", as.character(degree), sep="")
     p <- p + stat_function(data = data.frame(x = -20:20,
-                                             polynomial = rep(text, 41)),
+                                             degree = rep(as.character(degree), 41)),
                            fun = f,
-                           aes(colour = polynomial))
+                           aes(colour = degree))
   }
   p
 }
