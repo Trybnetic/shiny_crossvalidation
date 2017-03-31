@@ -11,3 +11,11 @@ calc_aic_bic <- function(max.poly, data) {
   }
   return(df)
 }
+
+plot_aic_bic <- function(data) {
+  p <- ggplot(data=data, aes(x=degree, y=value, group=measure, colour=measure))
+  p <- p + geom_line()
+  # p <- p + scale_color_manual(values=c(col1, col2))
+  p <- p + xlab("Degree") + ylab("Value") + labs(colour="Criterion")
+  return(p)
+}

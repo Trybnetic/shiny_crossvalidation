@@ -2,12 +2,13 @@ library(ggplot2)
 library(shiny)
 library(shinyBS)
 library(shinyjs)
+library(plotly)
 source("helpers.R")
 
 shinyUI(fluidPage(
 
   # Application title
-  titlePanel("AIC vs crossvalidation comparison"),
+  titlePanel("AIC vs cross-validation comparison"),
   
   bsModal(id = "DefineModel", title = "Define your generative model",
           size = "large", trigger = "ModelInit",
@@ -46,8 +47,10 @@ shinyUI(fluidPage(
 
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("ModelPlot"),
+      plotlyOutput("ModelPlot"),
+      #actionButton("Overview", "Let's see what we've got"),
       plotOutput("FitPlot")
+      
     )
   )
 ))
