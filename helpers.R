@@ -132,3 +132,11 @@ validation_se <- function(data, n_bins, max.poly = 2, seed = 1337) {
 
   return(res)
 }
+
+ModelTable <- function(Polynom){
+  
+    m <- matrix(0, nrow=Polynom+1, ncol=1)
+    rownames(m) <- c("Intercept", paste("X", 1:Polynom, sep="^"))
+  #print(m)
+      m
+}
