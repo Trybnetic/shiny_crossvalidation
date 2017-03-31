@@ -5,7 +5,7 @@ library(shinyjs)
 library(plotly)
 source("helpers.R")
 
-shinyUI(fluidPage(
+shinyUI(
   # Navbar
   navbarPage("app_name",
              # Tab1 title
@@ -32,7 +32,7 @@ shinyUI(fluidPage(
                         # Sidebar with a slider input for number of bins
                         sidebarLayout(
                           sidebarPanel(
-                            
+
                             actionButton(inputId = "ModelInit", label = "Define your own model"),
                             h3("Simulate data"),
                             numericInput("Sample",
@@ -81,4 +81,4 @@ shinyUI(fluidPage(
              )
 
   )
-))
+)
