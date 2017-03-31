@@ -33,13 +33,18 @@ shinyServer(function(input, output) {
     pdf(NULL)
     plotModels(Data(), input$max.poly)
   })
-  output$FitPlot <- renderPlot({
-    grid.arrange(
-      plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data())),
-      plotCrossValidation(validation_se(Data(),
-                                        input$n.bins,
-                                        input$max.poly)),
-      ncol=2
+  
+  observeEvent(input$Crossvalidate, { 
+    isolate(  
+      output$FitPlot <- renderPlot({
+        grid.arrange(
+          plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data())),
+          plotCrossValidation(validation_se(Data(),
+                                            input$n.bins,
+                                            input$max.poly)),
+          ncol=2
+        )
+      })
     )
   })
 
