@@ -93,7 +93,7 @@ split_data <- function(data, bin) {
 #'
 #' @returns data.frame of all points of data with estimated y values
 #' for each polynomial degree and the calculated MSEs
-validate <- function(data, n_bins, max.poly = 2, seed = 1337) {
+validate_cross <- function(data, n_bins, max.poly = 2, seed = 1337) {
   data <- add_bins(data, n_bins, seed)
   n <- length(n_bins) * max.poly * nrow(data)
   result <- data.frame()
@@ -124,7 +124,7 @@ validate <- function(data, n_bins, max.poly = 2, seed = 1337) {
 }
 
 validation_se <- function(data, n_bins, max.poly = 2, seed = 1337) {
-  result <- validate(data, n_bins, max.poly=max.poly, seed=seed)
+  result <- validate_cross(data, n_bins, max.poly=max.poly, seed=seed)
 
   res <- aggregate(cbind(estimate, mse) ~ degree, result, mean)
   res$n <- aggregate(mse ~ degree, result, length)$mse
