@@ -35,8 +35,8 @@ fitModels <- function(dat, max.poly) {
 
 plotModels <- function(Data, max.poly){
   estimated_functions <- fitModels(Data, max.poly)
-  #colors <- c(brewer.pal(9,"YlGn"),"#000000")
-  colors <- brewer.pal(10, "RdGy")
+  #colors <- c(brewer.pal(9,"Blues"),"#000000")
+  colors <- brewer.pal(10, "RdYlGn")
   names(colors) <- rep(1:10)
   lim_y_min <- -50000; lim_y_max <- 50000
   # plotting the data and the fitted models
@@ -60,7 +60,8 @@ plotModels <- function(Data, max.poly){
   # Work legend
   p <- p + theme(legend.background = element_rect(fill="#F0F0F0"), 
                  legend.title = element_text(size=8, colour = "#535353"),
-                 legend.text = element_text(size = 9, colour = "#535353"))
+                 legend.text = element_text(size = 9, colour = "#535353"),
+                 legend.position = "center")
   degree <- 0
   for (f in estimated_functions) {
     degree <- degree + 1
@@ -71,7 +72,7 @@ plotModels <- function(Data, max.poly){
                            aes(colour = polynomial))
   }
   p <- p + scale_color_manual(values=colors,
-                              name="Polynomials",
+                              name="Degree",
                               position="right")
   p
 }
