@@ -4,7 +4,7 @@ varf <-function(f, low, upp){
 
   r.sq <- integrate(X.sq, low, upp, f)
   
-  r.sq$value - meana^2
+  abs(r.sq$value - meana^2)
   
 }
 
