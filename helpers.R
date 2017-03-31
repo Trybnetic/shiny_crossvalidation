@@ -83,10 +83,6 @@ split_data <- function(data, bin) {
        test = data[data$bin == bin, ])
 }
 
-estimate <- function(model, x) {
-  x <- as.integer((2 + x) * 100) + 1
-  return(model$predicted[x])
-}
 
 #' Function to cross validate a dataset
 #'
@@ -99,24 +95,26 @@ estimate <- function(model, x) {
 #' for each polynomial degree and the calculated MSEs
 validate <- function(data, n_bins, max.poly = 2, seed = 1337) {
   data <- add_bins(data, n_bins, seed)
+  n <- length(n_bins) * max.poly * nrow(data)
   result <- data.frame()
 
   for (bin in 1:n_bins) {
     split <- split_data(data, bin)
 
-    model <- fitModels(split$train, max.poly, boundary=c(-2,2))
+    estimated_functions <- fitModels(split$train, max.poly)
+
     test_df <- split$test
     test_df <- test_df[order(test_df$x),]
     rownames(test_df) <- 1:nrow(test_df)
 
-    for (i in 1:max.poly) {
-      sub.dat <- model[model$degree == i, ]
+    degree <- 0
+    for (f in estimated_functions) {
+      degree <- degree + 1
+      tmp <- test_df
+      tmp$estimate <- f(tmp$x)
+      tmp$degree <- degree
 
-      new.dat <- test_df
-      new.dat$estimate <- estimate(sub.dat, new.dat$x)
-      new.dat$degree <- i
-
-      result <- rbind(result, new.dat)
+      result <- rbind(result, tmp)
     }
   }
 
