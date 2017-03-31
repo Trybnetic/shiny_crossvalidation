@@ -2,6 +2,7 @@
 # all packages it depends on
 library(ggplot2)
 library(polynom)
+library(RColorBrewer)
 
 # simulates data for a polynomial model and adds noise
 #
@@ -34,20 +35,44 @@ fitModels <- function(dat, max.poly) {
 
 plotModels <- function(Data, max.poly){
   estimated_functions <- fitModels(Data, max.poly)
-  colors = c("red","blue","green","yellow","black","orange", "chocolate", "deeppink", "seagreen", "slategray")
-
+  #colors <- c(brewer.pal(9,"YlGn"),"#000000")
+  colors <- brewer.pal(10, "RdGy")
+  names(colors) <- rep(1:10)
+  lim_y_min <- -50000; lim_y_max <- 50000
   # plotting the data and the fitted models
   p <- ggplot()
   p <- p + geom_point(aes(x, y), Data, colour = "darkgrey")
+  # Set the entire chart region to a light gray color
+  p <- p + theme_bw()
+  p <- p + theme(panel.background=element_rect(fill="#F0F0F0"),
+                 plot.background=element_rect(fill="#F0F0F0"),
+                 panel.border=element_rect(colour="#F0F0F0"))
+  # Format the grid
+  p <- p + theme(panel.grid.major=element_line(colour="#D0D0D0",size=1), axis.ticks=element_blank())
+  # Drop axis text, color axis titles
+  p <- p + theme(axis.text.x = element_blank(), 
+                 axis.text.y = element_blank(), 
+                 axis.title = element_text(size = 11,colour = "#535353"))
+  # Set y limits to keep the grid fixed
+  p <- p + ylim(lim_y_min,lim_y_max)
+  # Add solid black line to bottom of the plot
+  p <- p + geom_hline(yintercept=lim_y_min,size=.5,colour="#535353")
+  # Work legend
+  p <- p + theme(legend.background = element_rect(fill="#F0F0F0"), 
+                 legend.title = element_text(size=8, colour = "#535353"),
+                 legend.text = element_text(size = 9, colour = "#535353"))
   degree <- 0
   for (f in estimated_functions) {
     degree <- degree + 1
-    text <- paste("x^", as.character(degree), sep="")
+    text <- as.character(degree)
     p <- p + stat_function(data = data.frame(x = -20:20,
                                              polynomial = rep(text, 41)),
                            fun = f,
                            aes(colour = polynomial))
   }
+  p <- p + scale_color_manual(values=colors,
+                              name="Polynomials",
+                              position="right")
   p
 }
 
