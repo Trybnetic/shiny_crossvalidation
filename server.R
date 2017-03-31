@@ -11,10 +11,20 @@ shinyServer(function(input, output) {
       NULL
     }
     isolate(
-      simulateData(input$Sample,  Model(), input$Noise)
+      simulateData(input$Sample,  Model(), Noise())
     )
   })
-
+  
+  # Calculates the sd of the noise based on the variance of the selected function
+  # and the proportion of noise in the total variance 
+  Noise <- reactive({
+    varFunction <- varf(polynomial(Model()), -20, 20)
+    varNoise <- varFunction * input$Noise / (1-input$Noise)
+    sdNoise <- sqrt(varNoise)
+    
+    ifelse(sdNoise == 0, input$Noise, sdNoise)
+  })
+  
   output$ModelPlot <- renderPlotly({
     plotModels(Data(), input$max.poly)
   })
@@ -24,9 +34,9 @@ shinyServer(function(input, output) {
 
   # plot the generative model
   output$GenerativeModel <- renderPlot({
-    plotGenerativeModel(polynom = input$Polynom,
-                        model = Model(),
-                        noise=input$Noise)
+    plotGenerativeModel(poly_vec = Model(),
+                        #model = Model(),
+                        noise=Noise())
 
   })
 

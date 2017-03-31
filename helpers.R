@@ -18,7 +18,7 @@ simulateData <- function(sample_size, poly_vec, noise){
   # calculate y values
   y <- f(x)
 
-  y <- y + rnorm(sample_size, sd=sd(y)*noise)
+  y <- y + rnorm(sample_size, sd=noise)
   data.frame(x=x, y=y)
 }
 
@@ -52,19 +52,18 @@ plotModels <- function(Data, max.poly){
   p
 }
 
-plotGenerativeModel <- function(polynom, model, noise, min=-2, max=2){
-  x <- cbind(intercept=1, poly(seq(min, max, 0.01), polynom, simple = TRUE))
-
-  y <- x %*% model
-  var.y <- var(y)
-  noise <- noise/(1-noise)
-  upper <- as.vector(y) + sqrt(noise)
-  lower <- as.vector(y) - sqrt(noise)
-  d <- data.frame(x=x[,2], y=y, upper=upper, lower=lower)
-  p <- ggplot()
-  p <- p + geom_line(aes(x, y), d)
+plotGenerativeModel <- function(poly_vec, noise=NA, min=-20, max=20){
+  f <- as.function(polynomial(poly_vec))
+  x <- data.frame(x=seq(min, max, 0.01))
+  y <- f(x)
+  
+  upper <- as.vector(y) + noise
+  lower <- as.vector(y) - noise
+  d <- data.frame(x=x, y=y, upper=upper, lower=lower)
+  p <- ggplot(data=x, aes(x=x))
+  p <- p + stat_function(fun=f) #geom_line(aes(x, y), d)
   p <- p + geom_ribbon(aes(x=x, ymax=upper, ymin=lower), d, alpha="0.5")
-
+  
   p
 }
 
