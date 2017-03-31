@@ -1,0 +1,24 @@
+# About this App
+
+With this App we want to provide you a short overview over different model selection techniques. You can try out how these techniques vary for different data sets and underlying structures. On the other sites of the App, you have a lot of opportunities to try out all this stuff.  
+Besides the application of these techniques we aim to give you also a short overview about the techniques which are used in the App.
+
+## AIC and BIC
+The Akaike information criterion (AIC) and the Bayesian information criterion (BIC) are criterion for model selection. Both calculate an estimate of the model quality relative to other models. The model with the lowest AIC/BIC gets selected out of a set of models.  
+The estimation is calculated by subtracting the two times the log-Likelihood from a term depending on complexity of the model. The AIC calculates the penalty term as two times the free parameters whereas the BIC multiplies the number of free parameters with the logarithm of the sample size.
+
+### Formulas
+
+$\text{AIC} = 2k - 2\ln(\hat L)$  
+
+$\text{BIC} = \ln(n)k - 2\ln(\hat L)$
+
+## Cross Validation
+Cross Validation is a model validation technique which tries to calculate how good the model can predict data by predicting parts of the dataset by the other part.
+Therefore, the cross-validation method consists of two parts. At first you split your data into a training set and a testing set. After that you train your model on the training set and predict the testing set with the estimated model.  
+The measure of interest in this procedure is the quality of the predictions the trained model makes. The quality of the model can for example be estimated by calculating the accuracy to predict a datapoint correctly. If your dependent variable is continuous space you can also take measures like mean squared error into account.  
+It is common to repeat this procedure so every value of the dataset was predicted once.
+
+<center>
+![By Fabian Flöck (CC BY-SA 3.0), via Wikimedia Commons](images/cross_validation.jpg)
+</center>
