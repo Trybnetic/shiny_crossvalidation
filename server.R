@@ -5,7 +5,7 @@ library(shinyjs)
 library(plotly)
 library(polynom)
 source("helpers.R")
-
+source("varianceOfFunction.R")
 shinyServer(function(input, output) {
   Data <- reactive({
     if(input$Simulate == 0){
