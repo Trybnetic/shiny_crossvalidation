@@ -32,18 +32,21 @@ shinyUI(fluidPage(
                         # Sidebar with a slider input for number of bins
                         sidebarLayout(
                           sidebarPanel(
+                            
                             actionButton(inputId = "ModelInit", label = "Define your own model"),
+                            h3("Simulate data"),
                             numericInput("Sample",
                                          "Sample Size:",
                                          min = 20,
                                          max = 1000,
                                          value = 100),
+                            actionButton(inputId="Simulate", "Simulate new data"),
+                            h3("Specify models to fit"),
                             sliderInput("max.poly",
                                         "Select the maximum degree of polynomial:",
                                         min = 1,
                                         max = 10,
-                                        value = 7),
-                            actionButton(inputId="Simulate", "Simulate new data")
+                                        value = 7)
                           ),
                           
                           # Show a plot of the generated distribution

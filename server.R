@@ -35,28 +35,28 @@ shinyServer(function(input, output) {
     plotModels(Data(), input$max.poly)
   })
   
-  observeEvent(input$Crossvalidate, { 
-    isolate(  
-      output$FitPlot <- renderPlot({
-        grid.arrange(
-          plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data())),
-          plotCrossValidation(validation_se(Data(),
-                                            input$n.bins,
-                                            input$max.poly)),
-          ncol=2
-        )
-      })
-    )
+  # update the plots upon pressing button Crossvalidate
+  FPlot <- eventReactive(input$Crossvalidate, {
+      grid.arrange(
+        plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data())),
+        plotCrossValidation(validation_se(Data(),
+                                          input$n.bins,
+                                          input$max.poly)),
+        ncol=2
+      )
   })
+  # Render the BIC / crossvalidation plot
+  output$FitPlot <- renderPlot({FPlot()})
+
 
   # plot the generative model
   output$GenerativeModel <- renderPlot({
     plotGenerativeModel(poly_vec = Model(),
-                        #model = Model(),
                         noise=Noise())
 
   })
 
+  
   ModelTable <- reactive({
     m <- matrix(0, nrow=input$Polynom+1, ncol=1)
     rownames(m) <- c("Intercept", paste("X", 1:input$Polynom, sep="^"))
