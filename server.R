@@ -9,6 +9,7 @@ source("helpers.R")
 source("varianceOfFunction.R")
 source("plot_crossValidation.R")
 source("aicbic.R")
+source("rsquared")
 
 shinyServer(function(input, output) {
   Data <- reactive({
@@ -23,7 +24,7 @@ shinyServer(function(input, output) {
   # Calculates the sd of the noise based on the variance of the selected function
   # and the proportion of noise in the total variance 
   Noise <- reactive({
-    varFunction <- varf(polynomial(Model()), -20, 20)
+    varFunction <- varf(polynomial(Model()), -5, 5)
     varNoise <- varFunction * input$Noise / (1-input$Noise)
     sdNoise <- sqrt(varNoise)
     
@@ -34,6 +35,11 @@ shinyServer(function(input, output) {
     pdf(NULL)
     plotModels(Data(), input$max.poly)
   })
+  # remove the previous plots
+  observeEvent(input$Simulate,{
+    graphics.off()
+    #print(Model())
+    })
   
   # update the plots upon pressing button Crossvalidate
   FPlot <- eventReactive(input$Crossvalidate, {
@@ -48,7 +54,7 @@ shinyServer(function(input, output) {
   # Render the BIC / crossvalidation plot
   output$FitPlot <- renderPlot({FPlot()})
 
-
+  #observeEvent(input$Simulate, {print(Mod)})
   # plot the generative model
   output$GenerativeModel <- renderPlot({
     plotGenerativeModel(poly_vec = Model(),
@@ -56,21 +62,32 @@ shinyServer(function(input, output) {
 
   })
 
+  # 
+  # ModelTable <- reactive({
+  #   isolate(
+  #     m <- matrix(0, nrow=input$Polynom+1, ncol=1),
+  #     rownames(m) <- c("Intercept", paste("X", 1:input$Polynom, sep="^")),
+  #     m
+  #   )
+  #   
+  # })
   
-  ModelTable <- reactive({
-    m <- matrix(0, nrow=input$Polynom+1, ncol=1)
-    rownames(m) <- c("Intercept", paste("X", 1:input$Polynom, sep="^"))
-    m
+  Mod <- matrix(c(5,2,1,2), nrow=4) #reactiveValues()
+  #Mod$table <- matrix(c(5,2,1,2), nrow=4)
+  observeEvent(input$Polynom, {
+      Mod <<- matrix(0, nrow=input$Polynom+1, ncol=1)#ModelTable(input$Polynom)
   })
-  Mod <- reactiveValues()
-  Mod$table <- matrix(c(5,2,1,2), nrow=4)
-  observeEvent(input$Polynom,{
-    Mod$table <- ModelTable()
-  })
-
+  # Mod$table <- eventReactive(input$Polynom,{
+  #   print(input$Polynom)
+  #   ModelTable(input$Polynom)
+  # })
+  
   Model <- reactive({
-    Mod$table[input$SelectCoef,] <- input$Coefficient
-    Mod$table
+    #Terrible, terrible workaround
+      selCoef <- which(as.list(
+        c("Intercept",paste("X", 1:input$Polynom, sep="^")))==input$SelectCoef)
+      Mod[selCoef,] <<- input$Coefficient
+      Mod
   })
 
   output$CoefSelect <- renderUI({

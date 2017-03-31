@@ -14,7 +14,7 @@ simulateData <- function(sample_size, poly_vec, noise){
   f <- as.function(polynomial(poly_vec))
 
   # generate the x predictor
-  x <- runif(sample_size, -20, 20)
+  x <- runif(sample_size, -5, 5)
 
   # calculate y values
   y <- f(x)
@@ -65,9 +65,8 @@ plotModels <- function(Data, max.poly){
   degree <- 0
   for (f in estimated_functions) {
     degree <- degree + 1
-    
-    p <- p + stat_function(data = data.frame(x = -20:20,
-                                             degree = rep(as.character(degree), 41)),
+    p <- p + stat_function(data = data.frame(x = -5:5,
+                                             degree = rep(as.character(degree), 11)),
                            fun = f,
                            aes(colour = degree))
   }
@@ -77,7 +76,7 @@ plotModels <- function(Data, max.poly){
   p
 }
 
-plotGenerativeModel <- function(poly_vec, noise=NA, min=-20, max=20){
+plotGenerativeModel <- function(poly_vec, noise=NA, min=-5, max=5){
   f <- as.function(polynomial(poly_vec))
   pol <- as.character(polynomial(poly_vec))
   x <- data.frame(x=seq(min, max, 0.01))
@@ -165,4 +164,12 @@ validation_se <- function(data, n_bins, max.poly = 2, seed = 1337) {
   res$se <- res$sd / sqrt(res$n)
 
   return(res)
+}
+
+ModelTable <- function(Polynom){
+  
+    m <- matrix(0, nrow=Polynom+1, ncol=1)
+    rownames(m) <- c("Intercept", paste("X", 1:Polynom, sep="^"))
+  #print(m)
+      m
 }
