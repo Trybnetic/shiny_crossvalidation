@@ -10,10 +10,10 @@ shinyUI(fluidPage(
   navbarPage("app_name",
              # Tab1 title
              tabPanel("AIC vs. CVC",
-             
+
                         bsModal(id = "DefineModel", title = "Define your generative model",
                                 size = "large", trigger = "ModelInit",
-                                sidebarPanel(  
+                                sidebarPanel(
                                   numericInput("Polynom",
                                                "Select the highest polynom of the generative function",
                                                min = 1,
@@ -45,7 +45,7 @@ shinyUI(fluidPage(
                                         value = 7),
                             actionButton(inputId="Simulate", "Simulate new data")
                           ),
-                          
+
                           # Show a plot of the generated distribution
                           mainPanel(
                             plotlyOutput("ModelPlot")
@@ -69,19 +69,12 @@ shinyUI(fluidPage(
                       plotOutput("FitPlot")
              ),
              # Tab3 title
-             tabPanel("Tab3",
-                      
-                      # Tab3 sidebar
-                      sidebarLayout(
-                        sidebarPanel(
-                          helpText("Something to come.")
-                        ),
-                        
-                        # Tab3 plot
-                        mainPanel(
-                          plotOutput("tab3_plot")
-                        )
-                      )
+             tabPanel("About",
+               fluidRow(
+                 column(width = 6, offset = 3,
+                   withMathJax(includeMarkdown("description.Rmd"))
+                 )
+               )
              )
 
   )
