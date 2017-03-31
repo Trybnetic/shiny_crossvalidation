@@ -4,8 +4,11 @@ library(shinyBS)
 library(shinyjs)
 library(plotly)
 library(polynom)
+library(gridExtra)
 source("helpers.R")
 source("varianceOfFunction.R")
+source("plot_crossValidation.R")
+
 shinyServer(function(input, output) {
   Data <- reactive({
     if(input$Simulate == 0){
@@ -31,7 +34,13 @@ shinyServer(function(input, output) {
     plotModels(Data(), input$max.poly)
   })
   output$FitPlot <- renderPlot({
-    plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data()))
+    grid.arrange(
+      plot_aic_bic(calc_aic_bic(max.poly = input$max.poly, data = Data())),
+      plotCrossValidation(validation_se(Data(),
+                                        input$n.bins,
+                                        input$max.poly)),
+      ncol=2
+    )
   })
 
   # plot the generative model

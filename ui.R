@@ -43,30 +43,35 @@ shinyUI(fluidPage(
                                         min = 1,
                                         max = 10,
                                         value = 7),
+                            numericInput("n.bins", "Select the number of folds in a cross-validation",
+                                         min=2,
+                                         max=10,
+                                         value=5),
                             actionButton(inputId="Simulate", "Simulate new data")
                           ),
                           
                           # Show a plot of the generated distribution
                           mainPanel(
-                            plotlyOutput("ModelPlot"),
-                            plotOutput("FitPlot")
+                            plotlyOutput("ModelPlot")#,
+                            #plotOutput("FitPlot")
                           )
                         )
              ),
              # Tab2 title
-             tabPanel("Tab2",
-                      
-                      # Tab2 sidebar
-                      sidebarLayout(
-                        sidebarPanel(
-                          helpText("Something to come.")
-                        ),
-                        
-                        # Tab2 plot
-                        mainPanel(
-                          plotOutput("tab2_plot")
-                        )
-                      )
+             tabPanel("AIC/BIC vs cross-validation",
+                      plotOutput("FitPlot")
+                      #Tab2 sidebar
+                      # sidebarLayout(
+                      #   sidebarPanel(
+                      #    helpText("Something to come.")
+                      #   ),
+                      # 
+                      #   # Tab2 plot
+                      #   mainPanel(
+                      # 
+                      #     plotOutput("tab2_plot")
+                      #   )
+                      # )
              ),
              # Tab3 title
              tabPanel("Tab3",
