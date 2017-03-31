@@ -7,9 +7,9 @@ source("helpers.R")
 
 shinyUI(
   # Navbar
-  navbarPage("app_name",
+  navbarPage("AIC/BIC vs Cross-Validation",
              # Tab1 title
-             tabPanel("AIC vs. CVC",
+             tabPanel("Model Settings",
 
                         bsModal(id = "DefineModel", title = "Define your generative model",
                                 size = "large", trigger = "ModelInit",
@@ -56,7 +56,7 @@ shinyUI(
                         )
              ),
              # Tab2 title
-             tabPanel("AIC/BIC vs cross-validation",
+             tabPanel("Results",
                       #Tab2 sidebar
                       sidebarLayout(
                          sidebarPanel(

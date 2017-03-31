@@ -2,6 +2,7 @@
 # all packages it depends on
 library(ggplot2)
 library(polynom)
+library(RColorBrewer)
 
 # simulates data for a polynomial model and adds noise
 #
@@ -34,11 +35,33 @@ fitModels <- function(dat, max.poly) {
 
 plotModels <- function(Data, max.poly){
   estimated_functions <- fitModels(Data, max.poly)
-  colors = c("red","blue","green","yellow","black","orange", "chocolate", "deeppink", "seagreen", "slategray")
-
+  #colors <- c(brewer.pal(9,"Blues"),"#000000")
+  colors <- brewer.pal(10, "RdYlGn")
+  names(colors) <- rep(1:10)
+  lim_y_min <- -50000; lim_y_max <- 50000
   # plotting the data and the fitted models
   p <- ggplot()
   p <- p + geom_point(aes(x, y), Data, colour = "darkgrey")
+  # Set the entire chart region to a light gray color
+  p <- p + theme_bw()
+  p <- p + theme(panel.background=element_rect(fill="#F0F0F0"),
+                 plot.background=element_rect(fill="#F0F0F0"),
+                 panel.border=element_rect(colour="#F0F0F0"))
+  # Format the grid
+  p <- p + theme(panel.grid.major=element_line(colour="#D0D0D0",size=1), axis.ticks=element_blank())
+  # Drop axis text, color axis titles
+  p <- p + theme(axis.text.x = element_blank(), 
+                 axis.text.y = element_blank(), 
+                 axis.title = element_text(size = 11,colour = "#535353"))
+  # Set y limits to keep the grid fixed
+  p <- p + ylim(lim_y_min,lim_y_max)
+  # Add solid black line to bottom of the plot
+  p <- p + geom_hline(yintercept=lim_y_min,size=.5,colour="#535353")
+  # Work legend
+  p <- p + theme(legend.background = element_rect(fill="#F0F0F0"), 
+                 legend.title = element_text(size=8, colour = "#535353"),
+                 legend.text = element_text(size = 9, colour = "#535353"),
+                 legend.position = "center")
   degree <- 0
   for (f in estimated_functions) {
     degree <- degree + 1
@@ -47,6 +70,9 @@ plotModels <- function(Data, max.poly){
                            fun = f,
                            aes(colour = degree))
   }
+  p <- p + scale_color_manual(values=colors,
+                              name="Degree",
+                              position="right")
   p
 }
 
@@ -117,7 +143,7 @@ validate_cross <- function(data, n_bins, max.poly = 2, seed = 1337) {
     }
   }
 
-  result$mse <- (result$y - result$estimate)^2
+  result$sqerr <- (result$y - result$estimate)^2
 
   return(result[order(result$degree),])
 }
@@ -125,10 +151,17 @@ validate_cross <- function(data, n_bins, max.poly = 2, seed = 1337) {
 validation_se <- function(data, n_bins, max.poly = 2, seed = 1337) {
   result <- validate_cross(data, n_bins, max.poly=max.poly, seed=seed)
 
-  res <- aggregate(cbind(estimate, mse) ~ degree, result, mean)
-  res$n <- aggregate(mse ~ degree, result, length)$mse
+  # calculate mean for each bin
+  result <- aggregate(sqerr ~ degree + bin, result, mean)
+  colnames(result)[colnames(result) == "sqerr"] <- "mse"
+  result$n <- 1
 
-  res$se <- sqrt(res$mse) / sqrt(res$n)
+  # TODO improve this code!
+  res <- aggregate(mse ~ degree, result, mean)
+  res$sd <- aggregate(mse ~ degree, result, sd)$mse
+  res$n <- aggregate(n ~ degree, result, length)$n
+
+  res$se <- res$sd / sqrt(res$n)
 
   return(res)
 }
