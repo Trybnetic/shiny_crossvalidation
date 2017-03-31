@@ -5,11 +5,11 @@ library(shinyjs)
 library(plotly)
 source("helpers.R")
 
-shinyUI(fluidPage(
+shinyUI(
   # Navbar
-  navbarPage("app_name",
+  navbarPage("AIC/BIC vs Cross-Validation",
              # Tab1 title
-             tabPanel("AIC vs. CVC",
+             tabPanel("Model Settings",
 
                         bsModal(id = "DefineModel", title = "Define your generative model",
                                 size = "large", trigger = "ModelInit",
@@ -32,7 +32,7 @@ shinyUI(fluidPage(
                         # Sidebar with a slider input for number of bins
                         sidebarLayout(
                           sidebarPanel(
-                            
+
                             actionButton(inputId = "ModelInit", label = "Define your own model"),
                             h3("Simulate data"),
                             numericInput("Sample",
@@ -56,7 +56,7 @@ shinyUI(fluidPage(
                         )
              ),
              # Tab2 title
-             tabPanel("AIC/BIC vs cross-validation",
+             tabPanel("Results",
                       #Tab2 sidebar
                       sidebarLayout(
                          sidebarPanel(
@@ -81,4 +81,4 @@ shinyUI(fluidPage(
              )
 
   )
-))
+)
