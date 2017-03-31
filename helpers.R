@@ -65,11 +65,11 @@ plotModels <- function(Data, max.poly){
   degree <- 0
   for (f in estimated_functions) {
     degree <- degree + 1
-    text <- as.character(degree)
+    
     p <- p + stat_function(data = data.frame(x = -20:20,
-                                             polynomial = rep(text, 41)),
+                                             degree = rep(as.character(degree), 41)),
                            fun = f,
-                           aes(colour = polynomial))
+                           aes(colour = degree))
   }
   p <- p + scale_color_manual(values=colors,
                               name="Degree",
@@ -119,7 +119,7 @@ split_data <- function(data, bin) {
 #'
 #' @returns data.frame of all points of data with estimated y values
 #' for each polynomial degree and the calculated MSEs
-validate <- function(data, n_bins, max.poly = 2, seed = 1337) {
+validate_cross <- function(data, n_bins, max.poly = 2, seed = 1337) {
   data <- add_bins(data, n_bins, seed)
   n <- length(n_bins) * max.poly * nrow(data)
   result <- data.frame()
@@ -150,7 +150,7 @@ validate <- function(data, n_bins, max.poly = 2, seed = 1337) {
 }
 
 validation_se <- function(data, n_bins, max.poly = 2, seed = 1337) {
-  result <- validate(data, n_bins, max.poly=max.poly, seed=seed)
+  result <- validate_cross(data, n_bins, max.poly=max.poly, seed=seed)
 
   res <- aggregate(cbind(estimate, mse) ~ degree, result, mean)
   res$n <- aggregate(mse ~ degree, result, length)$mse
