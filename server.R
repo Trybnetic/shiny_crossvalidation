@@ -71,7 +71,7 @@ shinyServer(function(input, output) {
   #   
   # })
   
-  Mod <- matrix(c(5,2,1,2,4,5), nrow=4) #reactiveValues()
+  Mod <- matrix(c(5,2,1,2,4,5), nrow=6) #reactiveValues()
   #Mod$table <- matrix(c(5,2,1,2), nrow=4)
   observeEvent(input$Polynom, {
       Mod <<- matrix(0, nrow=input$Polynom+1, ncol=1)#ModelTable(input$Polynom)
