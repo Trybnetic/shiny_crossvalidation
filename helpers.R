@@ -144,7 +144,7 @@ validate_cross <- function(data, n_bins, max.poly = 2, seed = 1337) {
     }
   }
 
-  result$mse <- (result$y - result$estimate)^2
+  result$sqerr <- (result$y - result$estimate)^2
 
   return(result[order(result$degree),])
 }
@@ -152,10 +152,17 @@ validate_cross <- function(data, n_bins, max.poly = 2, seed = 1337) {
 validation_se <- function(data, n_bins, max.poly = 2, seed = 1337) {
   result <- validate_cross(data, n_bins, max.poly=max.poly, seed=seed)
 
-  res <- aggregate(cbind(estimate, mse) ~ degree, result, mean)
-  res$n <- aggregate(mse ~ degree, result, length)$mse
+  # calculate mean for each bin
+  result <- aggregate(sqerr ~ degree + bin, result, mean)
+  colnames(result)[colnames(result) == "sqerr"] <- "mse"
+  result$n <- 1
 
-  res$se <- sqrt(res$mse) / sqrt(res$n)
+  # TODO improve this code!
+  res <- aggregate(mse ~ degree, result, mean)
+  res$sd <- aggregate(mse ~ degree, result, sd)$mse
+  res$n <- aggregate(n ~ degree, result, length)$n
+
+  res$se <- res$sd / sqrt(res$n)
 
   return(res)
 }
